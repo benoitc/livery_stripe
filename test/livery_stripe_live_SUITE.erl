@@ -238,8 +238,13 @@ archive_product(Client, ProductId) ->
 email(Tag) ->
     <<"livery-stripe+", Tag/binary, "-", (unique())/binary, "@example.test">>.
 
+%% Unique across separate runs, not just within one VM. Stripe caches
+%% idempotency keys for 24h, so a key that repeats across runs replays a
+%% stale (already-deleted) object; the wall-clock prefix prevents that.
 unique() ->
-    integer_to_binary(erlang:unique_integer([positive, monotonic])).
+    Time = integer_to_binary(os:system_time(nanosecond)),
+    Mono = integer_to_binary(erlang:unique_integer([positive, monotonic])),
+    <<Time/binary, "-", Mono/binary>>.
 
 safe(Fun) ->
     try
