@@ -140,16 +140,13 @@ subscription_lifecycle(Config) ->
     CustomerId = maps:get(<<"id">>, Customer),
 
     %% Attach Stripe's shared test payment method so the first invoice can
-    %% be paid; no domain wrapper exists, so go through do_request directly.
-    {ok, Pm} = livery_stripe_client:do_request(
-        Client,
-        post,
-        <<"/payment_methods/pm_card_visa/attach">>,
-        #{customer => CustomerId}
-    ),
+    %% be paid.
+    {ok, Pm} = livery_stripe_payment_method:attach(Client, <<"pm_card_visa">>, #{
+        customer => CustomerId
+    }),
     PmId = maps:get(<<"id">>, Pm),
 
-    {ok, Sub} = livery_stripe_client:do_request(Client, post, <<"/subscriptions">>, #{
+    {ok, Sub} = livery_stripe_subscription:create(Client, #{
         customer => CustomerId,
         items => [#{price => PriceId}],
         default_payment_method => PmId,

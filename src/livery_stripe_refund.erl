@@ -1,12 +1,11 @@
--module(livery_stripe_subscription).
--moduledoc "Stripe Subscriptions API.".
+-module(livery_stripe_refund).
+-moduledoc "Stripe Refunds API.".
 
--export([
-    create/2, create/3, retrieve/2, update/3, cancel/2, cancel/3, list/1, list/2, pause/2, resume/2
-]).
+-export([create/2, create/3, retrieve/2, update/3, cancel/2, list/1, list/2]).
 
--define(BASE, <<"/subscriptions">>).
+-define(BASE, <<"/refunds">>).
 
+-doc "Refund a charge or PaymentIntent (Params carries `payment_intent` or `charge`).".
 -spec create(livery_client:client(), map() | list()) -> {ok, map()} | {error, term()}.
 create(Client, Params) ->
     create(Client, Params, #{}).
@@ -24,14 +23,10 @@ retrieve(Client, Id) ->
 update(Client, Id, Params) ->
     livery_stripe_client:do_request(Client, post, path(Id), Params).
 
--doc "Cancel a subscription immediately (Stripe `DELETE`).".
+-doc "Cancel a refund still in the `requires_action` state.".
 -spec cancel(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
 cancel(Client, Id) ->
-    livery_stripe_client:do_request(Client, delete, path(Id), none).
-
--spec cancel(livery_client:client(), binary(), map() | list()) -> {ok, map()} | {error, term()}.
-cancel(Client, Id, Params) ->
-    livery_stripe_client:do_request(Client, delete, path(Id), Params).
+    livery_stripe_client:do_request(Client, post, action(Id, <<"cancel">>), []).
 
 -spec list(livery_client:client()) -> {ok, map()} | {error, term()}.
 list(Client) ->
@@ -41,15 +36,8 @@ list(Client) ->
 list(Client, Params) ->
     livery_stripe_client:do_request(Client, get, ?BASE, Params).
 
--doc "Pause collection on a subscription (voids invoices while paused).".
--spec pause(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
-pause(Client, Id) ->
-    update(Client, Id, [{<<"pause_collection">>, #{<<"behavior">> => <<"void">>}}]).
-
--doc "Resume a paused subscription by clearing `pause_collection`.".
--spec resume(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
-resume(Client, Id) ->
-    update(Client, Id, [{<<"pause_collection">>, <<"">>}]).
-
 path(Id) ->
     <<?BASE/binary, "/", Id/binary>>.
+
+action(Id, Action) ->
+    <<?BASE/binary, "/", Id/binary, "/", Action/binary>>.

@@ -72,8 +72,12 @@ CheckoutUrl = maps:get(<<"url">>, Session),
 
 For an explicit client (multiple accounts, tests), call the domain modules
 directly: `livery_stripe_customer`, `livery_stripe_checkout`,
-`livery_stripe_subscription`, `livery_stripe_portal`, `livery_stripe_price`,
-`livery_stripe_product`, `livery_stripe_payment_intent`, `livery_stripe_invoice`.
+`livery_stripe_subscription` (`create`/retrieve/update/cancel/pause/resume),
+`livery_stripe_portal`, `livery_stripe_price`, `livery_stripe_product`,
+`livery_stripe_payment_intent`, `livery_stripe_payment_method`
+(attach/detach/list), `livery_stripe_setup_intent`, `livery_stripe_refund`,
+and `livery_stripe_invoice`. The facade also exposes
+`livery_stripe:create_subscription/1`.
 
 Build an explicit client with `livery_stripe_client:build(Config)`.
 

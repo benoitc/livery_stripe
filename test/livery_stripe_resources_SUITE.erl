@@ -111,7 +111,52 @@ table() ->
             <<"/invoices/in_1">>},
         {invoice_list, fun() -> livery_stripe_invoice:list(C) end, get, <<"/invoices">>},
         {invoice_pay, fun() -> livery_stripe_invoice:pay(C, <<"in_1">>) end, post,
-            <<"/invoices/in_1/pay">>}
+            <<"/invoices/in_1/pay">>},
+
+        %% subscription create
+        {sub_create, fun() -> livery_stripe_subscription:create(C, P) end, post,
+            <<"/subscriptions">>},
+
+        %% payment methods
+        {pm_attach,
+            fun() ->
+                livery_stripe_payment_method:attach(C, <<"pm_1">>, #{customer => <<"cus_1">>})
+            end,
+            post, <<"/payment_methods/pm_1/attach">>},
+        {pm_detach, fun() -> livery_stripe_payment_method:detach(C, <<"pm_1">>) end, post,
+            <<"/payment_methods/pm_1/detach">>},
+        {pm_retrieve, fun() -> livery_stripe_payment_method:retrieve(C, <<"pm_1">>) end, get,
+            <<"/payment_methods/pm_1">>},
+        {pm_update, fun() -> livery_stripe_payment_method:update(C, <<"pm_1">>, P) end, post,
+            <<"/payment_methods/pm_1">>},
+        {pm_list,
+            fun() ->
+                livery_stripe_payment_method:list(C, #{
+                    customer => <<"cus_1">>, type => <<"card">>
+                })
+            end,
+            get, <<"/payment_methods">>},
+
+        %% setup intents
+        {si_create, fun() -> livery_stripe_setup_intent:create(C, P) end, post,
+            <<"/setup_intents">>},
+        {si_retrieve, fun() -> livery_stripe_setup_intent:retrieve(C, <<"seti_1">>) end, get,
+            <<"/setup_intents/seti_1">>},
+        {si_confirm, fun() -> livery_stripe_setup_intent:confirm(C, <<"seti_1">>) end, post,
+            <<"/setup_intents/seti_1/confirm">>},
+        {si_cancel, fun() -> livery_stripe_setup_intent:cancel(C, <<"seti_1">>) end, post,
+            <<"/setup_intents/seti_1/cancel">>},
+        {si_list, fun() -> livery_stripe_setup_intent:list(C) end, get, <<"/setup_intents">>},
+
+        %% refunds
+        {refund_create, fun() -> livery_stripe_refund:create(C, P) end, post, <<"/refunds">>},
+        {refund_retrieve, fun() -> livery_stripe_refund:retrieve(C, <<"re_1">>) end, get,
+            <<"/refunds/re_1">>},
+        {refund_update, fun() -> livery_stripe_refund:update(C, <<"re_1">>, P) end, post,
+            <<"/refunds/re_1">>},
+        {refund_cancel, fun() -> livery_stripe_refund:cancel(C, <<"re_1">>) end, post,
+            <<"/refunds/re_1/cancel">>},
+        {refund_list, fun() -> livery_stripe_refund:list(C) end, get, <<"/refunds">>}
     ].
 
 endpoint_shapes(_Config) ->

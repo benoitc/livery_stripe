@@ -33,7 +33,7 @@ client (multi-account, tests) call the domain modules
 -export([create_portal_session/1]).
 
 %% Subscriptions
--export([get_subscription/1, update_subscription/2, cancel_subscription/1]).
+-export([create_subscription/1, get_subscription/1, update_subscription/2, cancel_subscription/1]).
 
 -type result() :: {ok, map()} | {error, term()}.
 -export_type([result/0]).
@@ -141,6 +141,10 @@ create_portal_session(Params) ->
 %%====================================================================
 %% Subscriptions
 %%====================================================================
+
+-spec create_subscription(map() | list()) -> result().
+create_subscription(Params) ->
+    livery_stripe_subscription:create(client(), Params).
 
 -spec get_subscription(binary()) -> result().
 get_subscription(Id) ->
