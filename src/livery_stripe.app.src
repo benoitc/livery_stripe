@@ -1,0 +1,17 @@
+{application, livery_stripe, [
+    {description, "Stripe API client built on the livery HTTP client"},
+    {vsn, "0.1.0"},
+    {registered, [livery_stripe_sup]},
+    {mod, {livery_stripe_app, []}},
+    {applications, [
+        kernel,
+        stdlib,
+        crypto,
+        hackney,
+        livery
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["Apache-2.0"]},
+    {links, []}
+]}.

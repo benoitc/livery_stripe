@@ -1,0 +1,183 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# livery is not on hex yet; it is consumed via _checkouts/livery. CI
+# checks out benoitc/livery into that path so rebar3 resolves it like
+# the local symlink. Drop these steps once livery is published to hex.
+
+jobs:
+  # ---- Static checks: fail fast ------------------------------------------
+  format:
+    name: erlfmt
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - run: rebar3 fmt --check
+
+  lint:
+    name: Elvis lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (instrument/quic NIFs)
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-ubuntu-24.04-otp-28-${{ hashFiles('rebar.config') }}
+      - run: rebar3 lint
+
+  xref:
+    name: XRef
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (instrument/quic NIFs)
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-ubuntu-24.04-otp-28-${{ hashFiles('rebar.config') }}
+      - run: rebar3 xref
+
+  dialyzer:
+    name: Dialyzer
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (instrument/quic NIFs)
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build/*_plt
+            _build/*/rebar3_*_plt
+            ~/.cache/rebar3
+          key: plt-otp-28-${{ hashFiles('rebar.config') }}
+          restore-keys: plt-otp-28-
+      - run: rebar3 dialyzer
+
+  # ---- Build + tests: gated on static checks -----------------------------
+  build:
+    name: Build on ${{ matrix.os }}
+    needs: [format, lint, xref, dialyzer]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (Linux only)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-${{ matrix.os }}-otp-28-${{ hashFiles('rebar.config') }}
+      - run: rebar3 compile
+
+  eunit:
+    name: EUnit on ${{ matrix.os }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (Linux only)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-${{ matrix.os }}-otp-28-${{ hashFiles('rebar.config') }}
+      - run: rebar3 eunit
+
+  ct:
+    name: Common Test on ${{ matrix.os }}
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (Linux only)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-${{ matrix.os }}-otp-28-${{ hashFiles('rebar.config') }}
+      - run: rebar3 ct

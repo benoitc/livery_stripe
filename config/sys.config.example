@@ -1,0 +1,32 @@
+%% Copy to config/sys.config and fill in. Secrets are better supplied via
+%% the OS environment (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET), which
+%% override the values below at runtime.
+[
+    {livery_stripe, [
+        {secret_key, <<"sk_test_replace_me">>},
+        {webhook_secret, <<"whsec_replace_me">>},
+        {api_version, <<"2024-06-20">>},
+
+        {timeout_ms, 30000},
+        {retry, #{
+            max => 3,
+            backoff => {500, 2.0},
+            statuses => [409, 429, 500, 502, 503, 504],
+            retry_non_idempotent => true,
+            retry_after_max => 60000
+        }},
+        {circuit_breaker, #{name => livery_stripe, window => 50, trip => 0.5, cooldown => 5000}},
+        {concurrency, 50},
+
+        %% Module | {Module, Function} | fun, called as handle_event(Type, Event).
+        {webhook_callback, undefined},
+
+        %% plan + billing_period -> Stripe price id (see livery_stripe:price_id/2).
+        {prices, #{
+            pro_monthly => <<"price_replace_pro_monthly">>,
+            pro_yearly => <<"price_replace_pro_yearly">>,
+            max_monthly => <<"price_replace_max_monthly">>,
+            max_yearly => <<"price_replace_max_yearly">>
+        }}
+    ]}
+].

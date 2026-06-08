@@ -1,0 +1,9 @@
+_build/
+_checkouts/
+.rebar3/
+rebar.lock
+*.beam
+*.dump
+erl_crash.dump
+config/sys.config
+.DS_Store
