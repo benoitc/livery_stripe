@@ -76,7 +76,8 @@ directly: `livery_stripe_customer`, `livery_stripe_checkout`,
 `livery_stripe_portal`, `livery_stripe_price`, `livery_stripe_product`,
 `livery_stripe_payment_intent`, `livery_stripe_payment_method`
 (attach/detach/list), `livery_stripe_setup_intent`, `livery_stripe_refund`,
-and `livery_stripe_invoice`. The facade also exposes
+`livery_stripe_invoice` (create/finalize/void/send/pay/upcoming), and
+`livery_stripe_event` (retrieve/list). The facade also exposes
 `livery_stripe:create_subscription/1`.
 
 Build an explicit client with `livery_stripe_client:build(Config)`.

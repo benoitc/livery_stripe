@@ -1,7 +1,18 @@
 -module(livery_stripe_customer).
 -moduledoc "Stripe Customers API.".
 
--export([create/2, create/3, retrieve/2, update/3, update/4, delete/2, list/1, list/2]).
+-export([
+    create/2,
+    create/3,
+    retrieve/2,
+    update/3,
+    update/4,
+    delete/2,
+    list/1,
+    list/2,
+    list_payment_methods/2,
+    list_payment_methods/3
+]).
 
 -define(BASE, <<"/customers">>).
 
@@ -43,5 +54,18 @@ list(Client) ->
 list(Client, Params) ->
     livery_stripe_client:do_request(Client, get, ?BASE, Params).
 
+-spec list_payment_methods(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
+list_payment_methods(Client, Id) ->
+    list_payment_methods(Client, Id, #{}).
+
+-doc "List a customer's payment methods; Params may carry `type`.".
+-spec list_payment_methods(livery_client:client(), binary(), map() | list()) ->
+    {ok, map()} | {error, term()}.
+list_payment_methods(Client, Id, Params) ->
+    livery_stripe_client:do_request(Client, get, payment_methods_path(Id), Params).
+
 path(Id) ->
     <<?BASE/binary, "/", Id/binary>>.
+
+payment_methods_path(Id) ->
+    <<?BASE/binary, "/", Id/binary, "/payment_methods">>.

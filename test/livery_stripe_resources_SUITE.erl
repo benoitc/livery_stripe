@@ -156,7 +156,38 @@ table() ->
             <<"/refunds/re_1">>},
         {refund_cancel, fun() -> livery_stripe_refund:cancel(C, <<"re_1">>) end, post,
             <<"/refunds/re_1/cancel">>},
-        {refund_list, fun() -> livery_stripe_refund:list(C) end, get, <<"/refunds">>}
+        {refund_list, fun() -> livery_stripe_refund:list(C) end, get, <<"/refunds">>},
+
+        %% invoice lifecycle
+        {invoice_create, fun() -> livery_stripe_invoice:create(C, P) end, post, <<"/invoices">>},
+        {invoice_finalize, fun() -> livery_stripe_invoice:finalize(C, <<"in_1">>) end, post,
+            <<"/invoices/in_1/finalize">>},
+        {invoice_void, fun() -> livery_stripe_invoice:void(C, <<"in_1">>) end, post,
+            <<"/invoices/in_1/void">>},
+        {invoice_send, fun() -> livery_stripe_invoice:send(C, <<"in_1">>) end, post,
+            <<"/invoices/in_1/send">>},
+        {invoice_mark_uncollectible,
+            fun() -> livery_stripe_invoice:mark_uncollectible(C, <<"in_1">>) end, post,
+            <<"/invoices/in_1/mark_uncollectible">>},
+        {invoice_delete, fun() -> livery_stripe_invoice:delete(C, <<"in_1">>) end, delete,
+            <<"/invoices/in_1">>},
+        {invoice_upcoming,
+            fun() -> livery_stripe_invoice:upcoming(C, #{customer => <<"cus_1">>}) end, get,
+            <<"/invoices/upcoming">>},
+
+        %% events
+        {event_retrieve, fun() -> livery_stripe_event:retrieve(C, <<"evt_1">>) end, get,
+            <<"/events/evt_1">>},
+        {event_list, fun() -> livery_stripe_event:list(C) end, get, <<"/events">>},
+
+        %% customer payment methods
+        {customer_pms, fun() -> livery_stripe_customer:list_payment_methods(C, <<"cus_1">>) end,
+            get, <<"/customers/cus_1/payment_methods">>},
+
+        %% payment intent update / list
+        {pi_update, fun() -> livery_stripe_payment_intent:update(C, <<"pi_1">>, P) end, post,
+            <<"/payment_intents/pi_1">>},
+        {pi_list, fun() -> livery_stripe_payment_intent:list(C) end, get, <<"/payment_intents">>}
     ].
 
 endpoint_shapes(_Config) ->
