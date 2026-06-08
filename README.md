@@ -138,6 +138,11 @@ Test suites:
 - `livery_stripe_facade_SUITE` - the facade, `price_id/2`, env override.
 - `livery_stripe_billing_SUITE` - end-to-end flow against a live livery mock
   Stripe server + webhook dispatch.
+- `livery_stripe_webhook_handler_SUITE` - webhook handler dispatch and the
+  200/400 responses.
+- `livery_stripe_webhook_e2e_SUITE` - boots a real livery service mounting the
+  webhook route and posts signed events over HTTP (200 + dispatch, 400 on a
+  bad or missing signature).
 - `livery_stripe_live_SUITE` - opt-in, hits the real Stripe API (see below).
 
 Requires Erlang/OTP 27+ (uses the stdlib `json` module).
