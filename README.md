@@ -147,17 +147,43 @@ Requires Erlang/OTP 27+ (uses the stdlib `json` module).
 Use a TEST-mode key (`sk_test_...`), never a live key. The operations below
 do not charge anyone.
 
+### Getting test-mode keys
+
+1. Open the [Stripe Dashboard](https://dashboard.stripe.com) and turn on
+   **Test mode** (toggle, top right).
+2. Go to **Developers -> API keys** and reveal the **Secret key**. In test
+   mode it starts with `sk_test_...` and only ever touches test data.
+3. For webhook tests, the signing secret (`whsec_...`) comes from
+   `stripe listen` (see below) or **Developers -> Webhooks -> [endpoint] ->
+   Signing secret**.
+
+Never use a live key (`sk_live_...`); the suite and examples are test-only.
+
 ### Automated live suite
 
 `test/livery_stripe_live_SUITE` is skipped unless `STRIPE_SECRET_KEY` is set.
-It creates a customer (and verifies the lifecycle), checks idempotency-key
-replay returns the same object, and creates a product + recurring price + a
-subscription Checkout session, cleaning up after itself (deletes customers,
-archives products/prices):
+It exercises the real API and cleans up after itself (deletes customers,
+archives products/prices, cancels subscriptions). Coverage: customer
+lifecycle, idempotency-key replay, product + recurring price + subscription
+Checkout session, a payment-intent lifecycle, a full subscription lifecycle
+(attach a test card, create, retrieve, update, cancel), invoice listing, and
+the cached-client facade path.
 
 ```sh
 STRIPE_SECRET_KEY=sk_test_xxx rebar3 ct --suite test/livery_stripe_live_SUITE
 ```
+
+### Running the live suite in CI
+
+`.github/workflows/live.yml` runs the suite weekly and on manual dispatch,
+reading the key from a repo secret. Set it once, then trigger on demand:
+
+```sh
+gh secret set STRIPE_SECRET_KEY        # paste the sk_test_... key
+gh workflow run live.yml               # gh run watch to follow
+```
+
+Without the secret the job auto-skips and stays green.
 
 ### Interactive exploration
 

@@ -1,0 +1,43 @@
+name: Live (Stripe test account)
+
+# Runs the opt-in live suite against a real Stripe account in TEST mode.
+# The key comes from the STRIPE_SECRET_KEY repo secret (sk_test_...). When
+# the secret is unset the suite auto-skips, so the job stays green.
+#
+# Set it up once:  gh secret set STRIPE_SECRET_KEY
+# Trigger on demand: gh workflow run live.yml
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+
+jobs:
+  live:
+    name: Common Test (live)
+    runs-on: ubuntu-24.04
+    # Never run on forks: the secret is not available there and the
+    # scheduled trigger would be a no-op anyway.
+    if: github.repository_owner == 'benoitc'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: benoitc/livery
+          path: _checkouts/livery
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '28'
+          rebar3-version: '3.25.0'
+      - name: System deps (instrument/quic NIFs)
+        run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      - uses: actions/cache@v5
+        with:
+          path: |
+            _build
+            ~/.cache/rebar3
+          key: build-ubuntu-24.04-otp-28-${{ hashFiles('rebar.config') }}
+      - name: Live suite
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        run: rebar3 ct --suite test/livery_stripe_live_SUITE

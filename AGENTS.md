@@ -65,12 +65,19 @@ rebar3 lint                                      # Elvis linter
 rebar3 ct --suite test/livery_stripe_client_SUITE  # One suite
 ```
 
-The live suite hits the real Stripe API and is skipped unless
-`STRIPE_SECRET_KEY` is set. Use a TEST-mode key (`sk_test_...`) only:
+The live suite (`test/livery_stripe_live_SUITE`) hits the real Stripe
+API in test mode and is skipped unless `STRIPE_SECRET_KEY` is set. It
+covers customer/product/price/checkout, payment intents, the full
+subscription lifecycle, invoices, and the cached-client facade, cleaning
+up after itself. Use a TEST-mode key (`sk_test_...`) only:
 
 ```bash
 STRIPE_SECRET_KEY=sk_test_xxx rebar3 ct --suite test/livery_stripe_live_SUITE
 ```
+
+CI runs it via `.github/workflows/live.yml` (weekly + manual dispatch)
+from the `STRIPE_SECRET_KEY` repo secret; it auto-skips when unset. See
+the README ("Testing against a real Stripe account") for obtaining keys.
 
 ## Architecture
 
