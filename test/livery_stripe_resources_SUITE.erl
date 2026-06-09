@@ -187,7 +187,35 @@ table() ->
         %% payment intent update / list
         {pi_update, fun() -> livery_stripe_payment_intent:update(C, <<"pi_1">>, P) end, post,
             <<"/payment_intents/pi_1">>},
-        {pi_list, fun() -> livery_stripe_payment_intent:list(C) end, get, <<"/payment_intents">>}
+        {pi_list, fun() -> livery_stripe_payment_intent:list(C) end, get, <<"/payment_intents">>},
+
+        %% coupons
+        {coupon_create, fun() -> livery_stripe_coupon:create(C, P) end, post, <<"/coupons">>},
+        {coupon_retrieve, fun() -> livery_stripe_coupon:retrieve(C, <<"co_1">>) end, get,
+            <<"/coupons/co_1">>},
+        {coupon_update, fun() -> livery_stripe_coupon:update(C, <<"co_1">>, P) end, post,
+            <<"/coupons/co_1">>},
+        {coupon_delete, fun() -> livery_stripe_coupon:delete(C, <<"co_1">>) end, delete,
+            <<"/coupons/co_1">>},
+        {coupon_list, fun() -> livery_stripe_coupon:list(C) end, get, <<"/coupons">>},
+
+        %% promotion codes
+        {promo_create, fun() -> livery_stripe_promotion_code:create(C, P) end, post,
+            <<"/promotion_codes">>},
+        {promo_retrieve, fun() -> livery_stripe_promotion_code:retrieve(C, <<"promo_1">>) end, get,
+            <<"/promotion_codes/promo_1">>},
+        {promo_update, fun() -> livery_stripe_promotion_code:update(C, <<"promo_1">>, P) end, post,
+            <<"/promotion_codes/promo_1">>},
+        {promo_list, fun() -> livery_stripe_promotion_code:list(C) end, get,
+            <<"/promotion_codes">>},
+
+        %% discount removal
+        {customer_delete_discount,
+            fun() -> livery_stripe_customer:delete_discount(C, <<"cus_1">>) end, delete,
+            <<"/customers/cus_1/discount">>},
+        {sub_delete_discount,
+            fun() -> livery_stripe_subscription:delete_discount(C, <<"sub_1">>) end, delete,
+            <<"/subscriptions/sub_1/discount">>}
     ].
 
 endpoint_shapes(_Config) ->

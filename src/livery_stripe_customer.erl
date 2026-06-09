@@ -11,7 +11,8 @@
     list/1,
     list/2,
     list_payment_methods/2,
-    list_payment_methods/3
+    list_payment_methods/3,
+    delete_discount/2
 ]).
 
 -define(BASE, <<"/customers">>).
@@ -63,6 +64,11 @@ list_payment_methods(Client, Id) ->
     {ok, map()} | {error, term()}.
 list_payment_methods(Client, Id, Params) ->
     livery_stripe_client:do_request(Client, get, payment_methods_path(Id), Params).
+
+-doc "Remove a customer's active discount.".
+-spec delete_discount(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
+delete_discount(Client, Id) ->
+    livery_stripe_client:do_request(Client, delete, <<(path(Id))/binary, "/discount">>, none).
 
 path(Id) ->
     <<?BASE/binary, "/", Id/binary>>.

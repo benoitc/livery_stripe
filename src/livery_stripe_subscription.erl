@@ -2,7 +2,17 @@
 -moduledoc "Stripe Subscriptions API.".
 
 -export([
-    create/2, create/3, retrieve/2, update/3, cancel/2, cancel/3, list/1, list/2, pause/2, resume/2
+    create/2,
+    create/3,
+    retrieve/2,
+    update/3,
+    cancel/2,
+    cancel/3,
+    list/1,
+    list/2,
+    pause/2,
+    resume/2,
+    delete_discount/2
 ]).
 
 -define(BASE, <<"/subscriptions">>).
@@ -50,6 +60,11 @@ pause(Client, Id) ->
 -spec resume(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
 resume(Client, Id) ->
     update(Client, Id, [{<<"pause_collection">>, <<"">>}]).
+
+-doc "Remove a subscription's active discount.".
+-spec delete_discount(livery_client:client(), binary()) -> {ok, map()} | {error, term()}.
+delete_discount(Client, Id) ->
+    livery_stripe_client:do_request(Client, delete, <<(path(Id))/binary, "/discount">>, none).
 
 path(Id) ->
     <<?BASE/binary, "/", Id/binary>>.
