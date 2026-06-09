@@ -1,6 +1,7 @@
 _build/
 _checkouts/
 .rebar3/
+doc/
 rebar.lock
 *.beam
 *.dump

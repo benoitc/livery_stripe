@@ -158,6 +158,7 @@ rebar3 ct                    # see suites below
 rebar3 xref
 rebar3 dialyzer
 rebar3 do eunit, ct, cover   # combined coverage report
+rebar3 ex_doc                # generate HTML API docs into doc/
 ```
 
 Test suites:
