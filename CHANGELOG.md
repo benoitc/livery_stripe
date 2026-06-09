@@ -49,4 +49,7 @@ livery HTTP client, covering the common billing and payments surface.
   (fmt / lint / xref / dialyzer, then build / eunit / ct) plus a gated,
   secret-driven workflow that runs the live suite weekly and on demand.
 - ex_doc (`rebar3_ex_doc`) configuration for HTML / hex API docs, with the
-  README, usage guide, and changelog as extras.
+  README, the "what you can build" overview, the task guides, and the
+  changelog as extras.
+- Use-case documentation: an overview plus task guides (getting started,
+  subscriptions, payments, saving cards, discounts, invoicing, webhooks).

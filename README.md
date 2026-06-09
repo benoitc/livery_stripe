@@ -6,7 +6,17 @@ same billing flow friendpaste uses (Checkout + Billing Portal + webhooks).
 
 ## Documentation
 
-Usage examples for every feature are in the [usage guide](docs/guide.md).
+New here? Start with [what you can build](docs/overview.md). Then dive into
+the task you have:
+
+- [Getting started](docs/guides/getting-started.md) - configure, first call,
+  errors, request options
+- [Subscription billing](docs/guides/subscriptions.md)
+- [One-time payments](docs/guides/payments.md)
+- [Saving cards](docs/guides/saving-cards.md)
+- [Discounts and promotions](docs/guides/discounts.md)
+- [Invoicing](docs/guides/invoicing.md)
+- [Webhooks](docs/guides/webhooks.md)
 
 ## Feature support
 
