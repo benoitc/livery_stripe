@@ -4,6 +4,33 @@ A Stripe API client for Erlang/OTP, built on the [livery](https://github.com/ben
 HTTP client. It covers core Stripe resources and subscriptions, and can back the
 same billing flow friendpaste uses (Checkout + Billing Portal + webhooks).
 
+## Documentation
+
+Usage examples for every feature are in the [usage guide](docs/guide.md).
+
+## Feature support
+
+| Resource | Module | Operations |
+|---|---|---|
+| Customers | `livery_stripe_customer` | create, retrieve, update, delete, list, list_payment_methods, delete_discount |
+| Products | `livery_stripe_product` | create, retrieve, update, list |
+| Prices | `livery_stripe_price` | create, retrieve, update, list |
+| Checkout | `livery_stripe_checkout` | create_session, retrieve_session, expire_session, subscription_session |
+| Billing portal | `livery_stripe_portal` | create_session |
+| Subscriptions | `livery_stripe_subscription` | create, retrieve, update, cancel, list, pause, resume, delete_discount |
+| Payment intents | `livery_stripe_payment_intent` | create, retrieve, update, confirm, capture, cancel, list |
+| Payment methods | `livery_stripe_payment_method` | attach, detach, retrieve, update, list |
+| Setup intents | `livery_stripe_setup_intent` | create, retrieve, confirm, cancel, list |
+| Refunds | `livery_stripe_refund` | create, retrieve, update, cancel, list |
+| Invoices | `livery_stripe_invoice` | create, retrieve, list, pay, finalize, void, send, mark_uncollectible, delete, upcoming |
+| Coupons | `livery_stripe_coupon` | create, retrieve, update, delete, list |
+| Promotion codes | `livery_stripe_promotion_code` | create, retrieve, update, list |
+| Events | `livery_stripe_event` | retrieve, list |
+| Webhooks | `livery_stripe_webhook`, `livery_stripe_webhook_handler` | signature verification + mountable handler |
+
+Any endpoint without a wrapper is reachable via
+`livery_stripe_client:do_request/4,5`.
+
 ## Why livery
 
 The client is built on `livery_client` and wired with livery's flow-control
