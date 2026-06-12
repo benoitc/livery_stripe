@@ -16,6 +16,7 @@ the task you have:
 - [Saving cards](docs/guides/saving-cards.md)
 - [Discounts and promotions](docs/guides/discounts.md)
 - [Invoicing](docs/guides/invoicing.md)
+- [SEPA Direct Debit](docs/guides/sepa-payments.md)
 - [Webhooks](docs/guides/webhooks.md)
 
 ## Feature support
@@ -36,7 +37,12 @@ the task you have:
 | Coupons | `livery_stripe_coupon` | create, retrieve, update, delete, list |
 | Promotion codes | `livery_stripe_promotion_code` | create, retrieve, update, list |
 | Events | `livery_stripe_event` | retrieve, list |
+| Mandates | `livery_stripe_mandate` | retrieve (SEPA / debit authorizations) |
 | Webhooks | `livery_stripe_webhook`, `livery_stripe_webhook_handler` | signature verification + mountable handler |
+
+SEPA Direct Debit uses the PaymentIntent / SetupIntent / Checkout wrappers
+with `payment_method_types => [<<"sepa_debit">>]`; see the
+[SEPA guide](docs/guides/sepa-payments.md).
 
 Any endpoint without a wrapper is reachable via
 `livery_stripe_client:do_request/4,5`.

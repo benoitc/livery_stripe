@@ -59,6 +59,15 @@ ready-made handler, and run your own code on each event.
 
 See [Webhooks](guides/webhooks.md).
 
+## Take SEPA Direct Debit payments
+
+Selling in Europe? Pull euro payments straight from a customer's bank
+account with SEPA Direct Debit. It uses the same PaymentIntent, SetupIntent,
+and Checkout calls with a `sepa_debit` payment method, plus reading the
+customer's mandate.
+
+See [SEPA Direct Debit](guides/sepa-payments.md).
+
 ## Start here
 
 New to the client? [Getting started](guides/getting-started.md) covers

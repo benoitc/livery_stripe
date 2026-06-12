@@ -215,7 +215,11 @@ table() ->
             <<"/customers/cus_1/discount">>},
         {sub_delete_discount,
             fun() -> livery_stripe_subscription:delete_discount(C, <<"sub_1">>) end, delete,
-            <<"/subscriptions/sub_1/discount">>}
+            <<"/subscriptions/sub_1/discount">>},
+
+        %% mandates (SEPA / debit authorizations)
+        {mandate_retrieve, fun() -> livery_stripe_mandate:retrieve(C, <<"mandate_1">>) end, get,
+            <<"/mandates/mandate_1">>}
     ].
 
 endpoint_shapes(_Config) ->

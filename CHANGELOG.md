@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- SEPA Direct Debit support: a `livery_stripe_mandate` module (retrieve)
+  and a SEPA guide. The payment flows use the existing PaymentIntent /
+  SetupIntent / Checkout wrappers with `payment_method_types =>
+  [<<"sepa_debit">>]`.
+
 ## [0.1.0] - 2026-06-09
 
 First working version: a Stripe API client for Erlang/OTP built on the
