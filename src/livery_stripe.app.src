@@ -1,6 +1,6 @@
 {application, livery_stripe, [
     {description, "Stripe API client built on the livery HTTP client"},
-    {vsn, "0.1.0"},
+    {vsn, "0.2.0"},
     {registered, [livery_stripe_sup]},
     {mod, {livery_stripe_app, []}},
     {applications, [
